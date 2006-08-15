@@ -1,0 +1,7 @@
+<!DOCTYPE project [
+]>
+
+<project xmlns:j="jelly:core"
+         xmlns:deploy="deploy">
+         
+</project>

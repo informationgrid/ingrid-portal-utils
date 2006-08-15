@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance.xsd" xsi:noNamespaceSchemaLocation="http://maven.apache.org/xsd/maven-project-3.0.0.xsd">
+    <pomVersion>3</pomVersion>
+    <artifactId>ingrid-portal-utils</artifactId>
+    <name>ingrid-portal-utils</name>
+    <groupId>ingrid</groupId>
+    <currentVersion>0.1-SNAPSHOT</currentVersion>
+    <organization>
+        <name>wemove</name>
+        <url>http://www.wemove.com</url>
+    </organization>
+    <inceptionYear>2006</inceptionYear>
+    <logo>/images/logo.gif</logo>
+    <shortDescription>a general util package for the portal</shortDescription>
+    <issueTrackingUrl>http://jira.media-style.com/browse/INGRID</issueTrackingUrl>
+    <siteAddress>http://213.144.28.209/ingrid/ingrid-portal-utils</siteAddress>
+    <siteDirectory>/srv/www/htdocs/ingrid/ingrid-portal-utils</siteDirectory>
+    <mailingLists>
+        <mailingList>
+            <name>${pom.name} Dev List</name>
+        </mailingList>
+        <mailingList>
+            <name>${pom.name} User List</name>
+        </mailingList>
+    </mailingLists>
+    <developers>
+        <developer>
+            <name>Joachim Müller</name>
+            <id>jm</id>
+            <email>joachim(at)wemove.com</email>
+            <organization>wemove</organization>
+        </developer>
+    </developers>
+    <shortDescription>todo short description</shortDescription>
+    <issueTrackingUrl>http://jira.media-style.com/browse/INGRID</issueTrackingUrl>
+    <siteAddress>http://213.144.28.209/ingrid/ingrid-utils</siteAddress>
+    <siteDirectory>/srv/www/htdocs/ingrid/ingrid-utils</siteDirectory>
+    <repository>
+        <connection>scm:svn:https://127.0.0.1:444/svn/ingrid/ingrid-portal-utils/trunk</connection>
+    </repository>
+    <build>
+        <sourceDirectory>src/java</sourceDirectory>
+        <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+        </unitTest>
+    </build>
+    <reports>
+        <report>maven-junit-report-plugin</report>
+        <report>maven-jcoverage-plugin</report>
+        <report>maven-simian-plugin</report>
+        <report>maven-javadoc-plugin</report>
+        <report>maven-pmd-plugin</report>
+        <report>maven-changes-plugin</report>
+        <report>maven-developer-activity-plugin</report>
+        <report>maven-file-activity-plugin</report>
+        <report>maven-jdepend-plugin</report>
+        <report>maven-tasklist-plugin</report>
+        <report>maven-license-plugin</report>
+        <report>maven-checkstyle-plugin</report>
+        <report>maven-jxr-plugin</report>
+        <report>maven-changelog-plugin</report>
+    </reports>
+    <properties />
+</project>
+
