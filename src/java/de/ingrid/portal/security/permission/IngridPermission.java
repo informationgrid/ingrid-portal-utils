@@ -26,20 +26,18 @@ public class IngridPermission extends BasicPermission {
     public static String PERMISSION_PORTAL_ADMIN = "portal.admin";
     // permission to change all portal content stuff
     public static String PERMISSION_PORTAL_ADMIN_CONTENT = "portal.admin.content";
-    // permission to change portal rss feed definitions
-    public static String PERMISSION_PORTAL_ADMIN_CONTENT_RSS = "portal.admin.content.rss";
     // permission to change the search engine index (urls, start, stop)
     public static String PERMISSION_PORTAL_ADMIN_INDEX = "portal.admin.index";
-    // permission to change the search engine index (catalog topics urls)
-    public static String PERMISSION_PORTAL_ADMIN_CATALOG_TOPICS = "portal.admin.catalog.topics";
-    // permission to change the search engine index (catalog measurement data urls)
-    public static String PERMISSION_PORTAL_ADMIN_CATALOG_DATA = "portal.admin.catalog.data";
-    // permission to change the search engine index (catalog service urls)
-    public static String PERMISSION_PORTAL_ADMIN_CATALOG_SERVICE = "portal.admin.catalog.service";
+    // permission to change the search engine index (catalog topics, measure, service)
+    public static String PERMISSION_PORTAL_ADMIN_CATALOG = "portal.admin.catalog";
     // permission to change the iplugs parameters
     public static String PERMISSION_PORTAL_ADMIN_IPLUG = "portal.admin.iplug";
-    // permission to admin the provider of the owned partners
-    public static String PERMISSION_PORTAL_ADMIN_PROVIDER = "portal.admin.provider";
+    // permission to admin the users of a certain partner
+    public static String PERMISSION_PORTAL_ADMIN_PARTNER = "portal.admin.partner";
+    // permission to see the portal statistics
+    public static String PERMISSION_PORTAL_ADMIN_STATISTICS = "portal.admin.statistics";
+    // permission to admin the WMS server
+    public static String PERMISSION_PORTAL_ADMIN_WMS = "portal.admin.wms";
     
     private String actions = null;
     private String parsedActions = null;
