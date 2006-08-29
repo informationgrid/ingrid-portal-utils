@@ -13,11 +13,6 @@ import java.util.StringTokenizer;
  *
  * @author joachim@wemove.com
  */
-/**
- * TODO Describe your created type (class, etc.) here.
- *
- * @author joachim@wemove.com
- */
 public class IngridPermission extends BasicPermission {
 
     private static final long serialVersionUID = 2246210603932755952L;
