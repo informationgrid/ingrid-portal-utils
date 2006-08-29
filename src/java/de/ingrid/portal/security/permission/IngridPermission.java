@@ -23,21 +23,16 @@ public class IngridPermission extends BasicPermission {
     private static final long serialVersionUID = 2246210603932755952L;
     
     // permission to change all portal specific stuff
-    public static String PERMISSION_PORTAL_ADMIN = "portal.admin";
-    // permission to change all portal content stuff
-    public static String PERMISSION_PORTAL_ADMIN_CONTENT = "portal.admin.content";
-    // permission to change the search engine index (urls, start, stop)
-    public static String PERMISSION_PORTAL_ADMIN_INDEX = "portal.admin.index";
-    // permission to change the search engine index (catalog topics, measure, service)
-    public static String PERMISSION_PORTAL_ADMIN_CATALOG = "portal.admin.catalog";
-    // permission to change the iplugs parameters
-    public static String PERMISSION_PORTAL_ADMIN_IPLUG = "portal.admin.iplug";
+    public static String PERMISSION_PORTAL_ADMIN = "admin.portal";
     // permission to admin the users of a certain partner
-    public static String PERMISSION_PORTAL_ADMIN_PARTNER = "portal.admin.partner";
-    // permission to see the portal statistics
-    public static String PERMISSION_PORTAL_ADMIN_STATISTICS = "portal.admin.statistics";
-    // permission to admin the WMS server
-    public static String PERMISSION_PORTAL_ADMIN_WMS = "portal.admin.wms";
+    public static String PERMISSION_PORTAL_ADMIN_PARTNER = "admin.portal.partner";
+    // permission to admin the users of a certain provider
+    public static String PERMISSION_PORTAL_ADMIN_PROVIDER = "admin.portal.provider";
+
+    // permission to change the search engine index (urls, start, stop)
+    public static String PERMISSION_PORTAL_ADMIN_INDEX = "admin.portal.partner.provider.index";
+    // permission to change the search engine index (catalog topics, measure, service)
+    public static String PERMISSION_PORTAL_ADMIN_CATALOG = "admin.portal.partner.provider.catalog";
     
     private String actions = null;
     private String parsedActions = null;

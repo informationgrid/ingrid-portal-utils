@@ -21,15 +21,15 @@ public class IngridPermissionTest extends TestCase {
         assertEquals(true, p.implies(p1));
 
         p = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN + ".*", "view, edit");
-        p1 = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN_CONTENT, "view");
+        p1 = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN_PARTNER, "view");
         assertEquals(true, p.implies(p1));
 
-        p = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN_CONTENT + ".*", "view, edit");
+        p = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN_PARTNER + ".*", "view, edit");
         p1 = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN, "view, edit");
         assertEquals(false, p.implies(p1));
 
         p = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN + ".*", "view");
-        p1 = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN_CONTENT, "view, edit");
+        p1 = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN_PARTNER, "view, edit");
         assertEquals(false, p.implies(p1));
 
         p = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN, "view");
@@ -51,7 +51,7 @@ public class IngridPermissionTest extends TestCase {
         IngridPermission p1 = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN, "view, edit");
         assertEquals(true, p.equals(p1));
 
-        p = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN_CONTENT + ".*", "view, edit");
+        p = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN_PARTNER + ".*", "view, edit");
         p1 = new IngridPermission(IngridPermission.PERMISSION_PORTAL_ADMIN, "view, edit");
         assertEquals(false, p.equals(p1));
         

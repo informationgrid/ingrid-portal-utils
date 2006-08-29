@@ -13,19 +13,19 @@ public class IngridPartnerPermissionTest extends TestCase {
         assertEquals(true, p.implies(p1));
 
         p = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN + ".*", "he, bund");
-        p1 = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN_CONTENT, "bund");
+        p1 = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN_INDEX, "bund");
         assertEquals(true, p.implies(p1));
 
-        p = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN_CONTENT + ".*", "he, bund");
+        p = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN_INDEX + ".*", "he, bund");
         p1 = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN, "he, bund");
         assertEquals(false, p.implies(p1));
 
         p = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN + ".*", "he");
-        p1 = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN_CONTENT, "he, bund");
+        p1 = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN_PARTNER, "he, bund");
         assertEquals(false, p.implies(p1));
         
         p = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN + ".*", "all");
-        p1 = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN_CONTENT, "he, bund");
+        p1 = new IngridPartnerPermission(IngridPartnerPermission.PERMISSION_PORTAL_ADMIN_PARTNER, "he, bund");
         assertEquals(true, p.implies(p1));
         
     }

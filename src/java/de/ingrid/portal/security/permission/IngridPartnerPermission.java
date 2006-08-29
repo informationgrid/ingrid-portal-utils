@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
  * The permissions are i.e.
  * 
  *   portal.admin.index - for changing the search engine index (urls, start, stop)
- *   portal.admin.content.rss - for changing the rss feeds in the portal
+ *   portal.admin.catalog - for changing the rss feeds in the portal
  *
  * @author joachim@wemove.com
  */
