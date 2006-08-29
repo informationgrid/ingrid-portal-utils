@@ -22,4 +22,8 @@ public class IngridPortalPermission extends IngridPermission {
         super(name, "");
     }
 
+    public IngridPortalPermission(String name, String actions) {
+        super(name, actions);
+    }
+    
 }
