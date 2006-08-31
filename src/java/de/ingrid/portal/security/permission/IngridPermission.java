@@ -84,6 +84,12 @@ public class IngridPermission extends BasicPermission {
         } else if (permission.getActions().length() == 0) {
             return false;
         }
+        
+        // check for '*' permission
+        if (parsedActions.equals("|*|")) {
+            return true;
+        }
+        
         // check for implied actions
         StringTokenizer tokenizer = new StringTokenizer(permission.getActions(), ",\t ");
         while (tokenizer.hasMoreTokens()) {

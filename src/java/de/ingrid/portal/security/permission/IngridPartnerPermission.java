@@ -4,18 +4,26 @@
 package de.ingrid.portal.security.permission;
 
 import java.security.Permission;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 /**
- * This class represent the portal permissions that are further restricted
- * partners.
+ * This class represent a responsibility permission for certain partner.
  * 
- * The permissions are i.e.
+ * The permission name stands for a certain partner.
  * 
- *   portal.admin.index - for changing the search engine index (urls, start, stop)
- *   portal.admin.catalog - for changing the rss feeds in the portal
- *
+ * 'partner.he' (resonsible for partner "Hessen")
+ * 
+ * 'partner.ni' (resonsible for partner "Niedersachsen")
+ * 
+ * 'partner.*' (resonsible for all partners)
+ * 
+ * 
+ * Permission specific responsibilities can be achieved by using a hierarchical
+ * permission name:
+ * 
+ * portal.admin.partner.he (partner admin for "Hessen")
+ * 
+ * portal.admin.partner.ni (partner admin for "Niedersachsen")
+ * 
  * @author joachim@wemove.com
  */
 public class IngridPartnerPermission extends IngridPermission {
@@ -25,40 +33,44 @@ public class IngridPartnerPermission extends IngridPermission {
     /**
      * Constructor
      * 
-     * @param name The permissions name.
-     * @param partners The partners the permission applies for (comma separated list, 'all' for all)
+     * @param partner
+     *            The partner the permission applies for ('all' for all).
+     * @param actions
+     *            The actions for the permission (comma separated list).
      */
-    public IngridPartnerPermission(String name, String partners) {
-        super(name, partners);
+    public IngridPartnerPermission(String partner, String actions) {
+        super(partner, actions);
     }
- 
+
     /**
-     * Returns all Partners
+     * Constructor
      * 
-     * @return List of partners.
+     * @param partner
      */
-    public ArrayList getPartners() {
-        ArrayList result = new ArrayList();
-        StringTokenizer tokenizer = new StringTokenizer(this.getActions(), ",\t ");
-        while (tokenizer.hasMoreTokens()) {
-            result.add(tokenizer.nextToken());
+    public IngridPartnerPermission(String partner) {
+        super(partner, "");
+    }
+
+    /**
+     * Return the partner (last string before '.')
+     * 
+     * @return The partner.
+     */
+    public String getPartner() {
+        String name = this.getName();
+        int pos = name.lastIndexOf('.');
+        if (pos == -1) {
+            return name;
+        } else {
+            return name.substring(name.lastIndexOf(".") + 1);
         }
-        return result;
     }
 
     /**
      * @see de.ingrid.portal.security.permission.IngridPermission#implies(java.security.Permission)
      */
     public boolean implies(Permission permission) {
-        
-        // permission counts for all partner
-        if (this.getParsedActions().indexOf("|all|") != -1) {
-            // do not check actions anymore
-            return super.implies(permission, false);
-        } else {
-            return super.implies(permission, true);
-        }
+        return super.implies(permission, true);
     }
-    
-    
+
 }

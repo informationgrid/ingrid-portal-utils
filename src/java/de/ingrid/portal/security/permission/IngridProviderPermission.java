@@ -4,18 +4,28 @@
 package de.ingrid.portal.security.permission;
 
 import java.security.Permission;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 /**
- * This class represent the portal permissions that are further restricted
- * providers.
+ * This class represent a responsibility permission for certain providers.
  * 
- * The permissions are i.e.
+ * The permission name stands for a certain provider ('all' for all providers).
  * 
- *   portal.admin.index - for changing the search engine index (urls, start, stop)
- *   portal.admin.content.rss - for changing the rss feeds in the portal
- *
+ * 'provider.he_lva' (resonsible for partner "Hessen", provider
+ * "Landesvermessungsamt")
+ * 
+ * 'provider.ni_lva' (resonsible for partner "Niedersachsen", provider
+ * "Landesvermessungsamt")
+ * 
+ * 'provider.*' (resonsible all providers)
+ * 
+ * 
+ * Permission specific responsibilities can be achieved by using a hierarchical
+ * permission name:
+ * 
+ * portal.admin.partner.provider.he_lva
+ * 
+ * portal.admin.partner.provider.ni_lva
+ * 
  * @author joachim@wemove.com
  */
 public class IngridProviderPermission extends IngridPermission {
@@ -25,39 +35,45 @@ public class IngridProviderPermission extends IngridPermission {
     /**
      * Constructor
      * 
-     * @param name The permissions name.
-     * @param providers The providers the permission applies for (comma separated list, 'all' for all)
+     * @param provider
+     *            The providers name.
+     * @param actions
+     *            The providers actions (comma separated list)
      */
-    public IngridProviderPermission(String name, String providers) {
-        super(name, providers);
+    public IngridProviderPermission(String provider, String actions) {
+        super(provider, actions);
     }
-    
+
     /**
-     * Returns all Providers
+     * Constructor
      * 
-     * @return List of providers.
+     * @param provider
+     *            The providers name.
      */
-    public ArrayList getProviders() {
-        ArrayList result = new ArrayList();
-        StringTokenizer tokenizer = new StringTokenizer(this.getActions(), ",\t ");
-        while (tokenizer.hasMoreTokens()) {
-            result.add(tokenizer.nextToken());
-        }
-        return result;
+    public IngridProviderPermission(String provider) {
+        super(provider, "");
     }
-    
+
+    /**
+     * Return the provider of the permission. (last string before '.')
+     * 
+     * @return The provider.
+     */
+    public String getProvider() {
+        String name = this.getName();
+        int pos = name.lastIndexOf('.');
+        if (pos == -1) {
+            return name;
+        } else {
+            return name.substring(name.lastIndexOf(".") + 1);
+        }
+    }
+
     /**
      * @see de.ingrid.portal.security.permission.IngridPermission#implies(java.security.Permission)
      */
     public boolean implies(Permission permission) {
-        
-        // permission counts for all provider
-        if (this.getParsedActions().indexOf("|all|") != -1) {
-            // do not check actions anymore
-            return super.implies(permission, false);
-        } else {
-            return super.implies(permission, true);
-        }
+        return super.implies(permission, true);
     }
-    
+
 }
