@@ -12,8 +12,8 @@ package de.ingrid.portal.security.role;
  */
 public class IngridRole {
 
-    public static String ROLE_ADMIN_PORTAL = "admin-portal";
-    public static String ROLE_ADMIN_PARTNER = "admin-partner";
-    public static String ROLE_ADMIN_PROVIDER = "admin-provider";
+    public static final String ROLE_ADMIN_PORTAL = "admin-portal";
+    public static final String ROLE_ADMIN_PARTNER = "admin-partner";
+    public static final String ROLE_ADMIN_PROVIDER = "admin-provider";
 
 }
