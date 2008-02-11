@@ -51,7 +51,7 @@ public class IngridProviderPermission extends IngridPermission {
      *            The providers name.
      */
     public IngridProviderPermission(String provider) {
-        super(provider, "");
+        super(provider, "*");
     }
 
     /**

@@ -48,7 +48,7 @@ public class IngridPartnerPermission extends IngridPermission {
      * @param partner
      */
     public IngridPartnerPermission(String partner) {
-        super(partner, "");
+        super(partner, "*");
     }
 
     /**
