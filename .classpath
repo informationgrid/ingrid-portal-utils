@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ingrid-utils"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org.apache.portals.jetspeed-2/jars/jetspeed-api-2.1-dev.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org.apache.portals.jetspeed-2/jars/jetspeed-security-2.1-dev.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
-	<classpathentry kind="output" path="target/classes"/>
+  <classpathentry excluding="" kind="src" path="src/java">
+  </classpathentry>
+  <classpathentry output="target/test-classes" kind="src" path="src/test">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/junit/jars/junit-3.8.1.jar" kind="var">
+  </classpathentry>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/hibernate/jars/hibernate-3.1rc2.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/commons-configuration/jars/commons-configuration-1.2.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/commons-lang/jars/commons-lang-2.1.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/ingrid/jars/ingrid-utils-1.2-SNAPSHOT.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/ingrid/jars/ingrid-ibus-client-1.1.0-SNAPSHOT.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/org.apache.portals.jetspeed-2/jars/jetspeed-security-2.1.jar" kind="var">
+  </classpathentry>
+  <classpathentry path="MAVEN_REPO/org.apache.portals.jetspeed-2/jars/jetspeed-api-2.1.jar" kind="var">
+  </classpathentry>
+  <classpathentry kind="output" path="target/classes">
+  </classpathentry>
 </classpath>
