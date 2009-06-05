@@ -39,7 +39,7 @@
         <connection>scm:svn:https://127.0.0.1:444/svn/ingrid/ingrid-portal-utils/trunk</connection>
     </repository>
     <build>
-        <sourceDirectory>src/java</sourceDirectory>
+        <sourceDirectory>src/main/java</sourceDirectory>
         <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
         <unitTest>
             <includes>
