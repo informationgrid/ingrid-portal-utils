@@ -31,6 +31,21 @@ import org.apache.jetspeed.security.User;
  */
 public interface UserManager
 {
+
+    /**
+     * <p>
+     * Retrieves a detached and modifiable {@link User} list matching the corresponding
+     * query context. It returns a {@link UserResultList}, containing
+     * the actual result list an the total number of results from the query.
+     * 
+     * </p>
+     * 
+     * @param queryContext The (@see JetspeedPrincipalQueryContext) for this query.
+     * @return
+     * @throws SecurityException
+     */
+    public UserResultList getUsersExtended(JetspeedPrincipalQueryContext queryContext) throws SecurityException;   
+    
     /**
      * @return the name of the anonymous user
      */
