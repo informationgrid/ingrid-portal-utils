@@ -18,6 +18,7 @@ import java.sql.Date;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.jetspeed.security.SecurityException;
 import org.apache.jetspeed.security.User;
 
 /**
