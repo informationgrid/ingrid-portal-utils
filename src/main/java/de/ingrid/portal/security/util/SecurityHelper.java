@@ -44,7 +44,7 @@ public class SecurityHelper {
         Permissions result = null;
         try {
             Collection<Role> roles = (Collection<Role>)roleManager.getRolesForUser(p.getName());
-            getMergedPermissions(p, roles, permissionManager);
+            result = getMergedPermissions(p, roles, permissionManager);
         } catch (SecurityException e) {
             if (log.isErrorEnabled()) {
                 log.error("Error merging roles of principal '" + p.getName() + "'!", e);
