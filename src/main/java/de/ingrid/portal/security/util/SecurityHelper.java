@@ -6,6 +6,7 @@ package de.ingrid.portal.security.util;
 import java.security.Permission;
 import java.security.Permissions;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -37,27 +38,42 @@ public class SecurityHelper {
      *            The JETSPEED role manager.
      * @return The merged Permissions.
      */
+    @SuppressWarnings("unchecked")
     public static Permissions getMergedPermissions(Principal p, PermissionManager permissionManager,
             RoleManager roleManager) {
-        Permissions result = permissionManager.getPermissions(p);
+        Permissions result = null;
         try {
-            Collection roles = roleManager.getRolesForUser(p.getName());
-            Iterator roleIterator = roles.iterator();
-            while (roleIterator.hasNext()) {
-                // check for role based permission to show the user
-                Role role = (Role) roleIterator.next();
-                Permissions rp = permissionManager.getPermissions(role.getPrincipal());
-                Enumeration en = rp.elements();
-                while (en.hasMoreElements()) {
-                    result.add((Permission) en.nextElement());
-                }
-            }
+            Collection<Role> roles = (Collection<Role>)roleManager.getRolesForUser(p.getName());
+            getMergedPermissions(p, roles, permissionManager);
         } catch (SecurityException e) {
             if (log.isErrorEnabled()) {
                 log.error("Error merging roles of principal '" + p.getName() + "'!", e);
             }
         }
         return result;
+    }
+    
+    /**
+     * Get merged permissions from user and his roles.
+     * 
+     * @param p
+     * @param roles
+     * @param permissionManager
+     * @return
+     */
+    public static Permissions getMergedPermissions(Principal p, Collection<Role> roles, PermissionManager permissionManager) {
+        
+        Permissions result = null;
+        Collection<Principal> principals = new ArrayList<Principal>();
+        principals.add(p);
+        Iterator<Role> roleIterator = roles.iterator();
+        while (roleIterator.hasNext()) {
+            // check for role based permission to show the user
+            Role role = roleIterator.next();
+            principals.add(role.getPrincipal());
+        }
+        result = permissionManager.getPermissions(principals);
+        return result;        
     }
     
 }
