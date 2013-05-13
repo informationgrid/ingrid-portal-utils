@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import junit.framework.TestCase;
 
-public class XSSRequestWrapperTest extends TestCase {
+public class XSSTest extends TestCase {
 	
 	/** Mocked Servlet Request containing "infected" parameters. */
 	HttpServletRequest requestMocked = null;
