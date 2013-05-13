@@ -19,6 +19,26 @@ import junit.framework.TestCase;
 
 public class XSSTest extends TestCase {
 	
+	/** Mocked FilterConfig containing regexps for external configuration ! */
+	FilterConfig filterConfigMocked = null;
+
+	/** The value the matching regular expressions will be replaced with ! */
+	String confReplaceValue = "XSS_STRIPPED";
+	
+	/** Regular expressions passed from external configuration (web.xml). */
+	String[] confRegexps = new String[] {
+			"<script>(.*?)</script>",
+			"src[\r\n]*=[\r\n]*\\\'(.*?)\\\'",
+			"src[\r\n]*=[\r\n]*\\\"(.*?)\\\"",
+			"</script>",
+			"<script(.*?)>",
+			"eval\\((.*?)\\)",
+			"expression\\((.*?)\\)",
+			"javascript:",
+			"vbscript:",
+			"onload(.*?)="
+	};
+
 	/** Mocked Servlet Request containing "infected" parameters. */
 	HttpServletRequest requestMocked = null;
 	
@@ -35,34 +55,17 @@ public class XSSTest extends TestCase {
 			"onload=alert('TEST')",
 	};
 
-	/** The CLEARED XSS parameter values */
+	/** The CLEARED XSS parameter values ! $REPLACE_VALUE can be configured ! */
 	String[] paramValuesStripped = new String[] {
-			"",
-			"alert('TEST')",
-			"alert('TEST')",
-			"alert('TEST')",
-			"",
-			"",
-			"",
-			"alert('TEST')",
-			"alert('TEST')"
-	};
-
-	/** Mocked FilterConfig containing regexps for external configuration ! */
-	FilterConfig filterConfigMocked = null;
-
-	/** Regular expressions passed from external configuration (web.xml). */
-	String[] confRegexps = new String[] {
-			"<script>(.*?)</script>",
-			"src[\r\n]*=[\r\n]*\\\'(.*?)\\\'",
-			"src[\r\n]*=[\r\n]*\\\"(.*?)\\\"",
-			"</script>",
-			"<script(.*?)>",
-			"eval\\((.*?)\\)",
-			"expression\\((.*?)\\)",
-			"javascript:",
-			"vbscript:",
-			"onload(.*?)="
+			"$REPLACE_VALUE",
+			"$REPLACE_VALUE" + "alert('TEST')",
+			"alert('TEST')" + "$REPLACE_VALUE",
+			"$REPLACE_VALUE" + "alert('TEST')",
+			"$REPLACE_VALUE",
+			"$REPLACE_VALUE",
+			"$REPLACE_VALUE",
+			"$REPLACE_VALUE" + "alert('TEST')",
+			"$REPLACE_VALUE" + "alert('TEST')"
 	};
 
 	@Override
@@ -85,10 +88,14 @@ public class XSSTest extends TestCase {
 
 		// Map containing all filter params (regexps) for external configuration.
 		Map<String, String> filterParamsMap = new HashMap<String, String>();
+		// add replaceValue !
+		filterParamsMap.put(XSSFilter.REPLACE_VALUE_PARAM_NAME, confReplaceValue);
+		// add regular exprissions to be replaced by replaceValue !
 		for (int i=0; i<confRegexps.length; i++) {
 			String paramName = "param"+i;
 			filterParamsMap.put(paramName, confRegexps[i]);
 		}
+		
 
 		// mock configuration from web.xml
 		filterConfigMocked = mock(FilterConfig.class);
@@ -101,11 +108,11 @@ public class XSSTest extends TestCase {
 	public void testXSSRequestWrapper() {
 		// our request wrapper stripping values WITH DEFAULT CONFIGURATION !
 		HttpServletRequestWrapper xssReq = new XSSRequestWrapper(requestMocked);		
-		checkRequest(xssReq);
+		checkRequest(xssReq, "");
 
 		// our request wrapper stripping values WITH EXTERNAL CONFIGURATION !
-		xssReq = new XSSRequestWrapper(requestMocked, Arrays.asList(confRegexps));
-		checkRequest(xssReq);
+		xssReq = new XSSRequestWrapper(requestMocked, Arrays.asList(confRegexps), confReplaceValue);
+		checkRequest(xssReq, confReplaceValue);
     }
 
 	public void testXSSFilter() throws ServletException {
@@ -119,11 +126,12 @@ public class XSSTest extends TestCase {
 		}
     }
 
-	private void checkRequest(HttpServletRequestWrapper req) {
+	private void checkRequest(HttpServletRequestWrapper req, String replaceValue) {
+
 		// all param values are stripped in request !
 		for (int i=0; i<paramValuesStripped.length; i++) {
 			String paramName = "param"+i;
-			String paramValueStripped = paramValuesStripped[i];
+			String paramValueStripped = paramValuesStripped[i].replace("$REPLACE_VALUE", replaceValue);
 
 	        assertEquals(paramValueStripped, req.getHeader(paramName));
 	        assertEquals(paramValueStripped, req.getParameter(paramName));

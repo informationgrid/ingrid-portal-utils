@@ -19,6 +19,14 @@ public class XSSFilter implements Filter {
 
 	private static final Logger LOG = Logger.getLogger(XSSFilter.class);
 
+	/** Name of the parameter from filter config containing the value the
+	 * matching regular expressions will be replaced with ! */
+	public static final String REPLACE_VALUE_PARAM_NAME = "replaceValue";
+
+	/** The value the matching regular expressions will be replaced with ! */
+	String replaceValueFromConfig = null;
+
+	/** The regular expressions which will be replaced by the replaceValue ! */
 	List<String> regexpFromConfig = null;
 
     @Override
@@ -29,22 +37,31 @@ public class XSSFilter implements Filter {
 
         // extract regexp from configuration
         if (filterConfig != null) {
-        	List<String> tmpRegexps = new ArrayList<String>();
+        	List<String> myRegexps = new ArrayList<String>();
 
         	Enumeration paramNames = filterConfig.getInitParameterNames();
         	while (paramNames.hasMoreElements()) {
         		String paramName = paramNames.nextElement().toString();
-        		String tmpRegexp = filterConfig.getInitParameter(paramName);
+        		String paramValue = filterConfig.getInitParameter(paramName);
         		
-                if (LOG.isDebugEnabled()) {
-                	LOG.debug("Passed regex from web.xml: \"" + tmpRegexp + "\"");
-                }
+        		if (REPLACE_VALUE_PARAM_NAME.equals(paramName)) {
+        			if (LOG.isDebugEnabled()) {
+                    	LOG.debug("Passed replaceValue from web.xml: \"" + paramValue + "\"");
+                    }
 
-                tmpRegexps.add(tmpRegexp);
+        			replaceValueFromConfig = paramValue;
+
+        		} else {
+                    if (LOG.isDebugEnabled()) {
+                    	LOG.debug("Passed regex from web.xml: \"" + paramValue + "\"");
+                    }
+
+                    myRegexps.add(paramValue);
+        		}
         	}
         	
-        	if (tmpRegexps.size() > 0) {
-        		regexpFromConfig = tmpRegexps;
+        	if (myRegexps.size() > 0) {
+        		regexpFromConfig = myRegexps;
         	}
         }
     }
@@ -56,10 +73,13 @@ public class XSSFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        chain.doFilter(new XSSRequestWrapper((HttpServletRequest) request, regexpFromConfig), response);
+        chain.doFilter(new XSSRequestWrapper((HttpServletRequest) request, regexpFromConfig, replaceValueFromConfig), response);
     }
 
 	public List<String> getRegexpFromConfig() {
 		return regexpFromConfig;
+	}
+	public String getReplaceValueFromConfig() {
+		return replaceValueFromConfig;
 	}
 }

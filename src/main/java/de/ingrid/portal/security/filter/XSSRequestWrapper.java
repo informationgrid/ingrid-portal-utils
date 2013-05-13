@@ -16,7 +16,11 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	private static final Logger LOG = Logger.getLogger(XSSRequestWrapper.class);
 
-    private static Pattern[] patterns = new Pattern[]{
+	/** The default value the matching regular expressions will be replaced with ! */
+    private String regexReplaceValue = "";
+
+	/** The default regular expressions which will be replaced by the replaceValue ! */
+    private Pattern[] patterns = new Pattern[]{
         // Script fragments
         Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE),
         // src='...'
@@ -41,29 +45,35 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
      * @param servletRequest original request
      */
     public XSSRequestWrapper(HttpServletRequest servletRequest) {
-        this(servletRequest, null);
+        this(servletRequest, null, null);
     }
 
-    /** Our Wrapper stripping the parameter values according to passed regexps !
+    /** Our Wrapper stripping the parameter values according to passed regexps and replaceValue !
      * @param servletRequest original request
-     * @param regexpsFromConfig configuration of filter from web.xml (initial parameters).<br>
-     * 		Pass <b>null</b> if default configuration.<br>
-     * 		Pass regexps to configure stripping ! 
+     * @param regexps regular expressions to be replaced with default value.
+     * 		Pass <b>null</b> if default configuration.
+     * @param replaceValue The value the matching regular expressions will be replaced with.
+     * 		Pass <b>null</b> if default configuration.
      */
-    public XSSRequestWrapper(HttpServletRequest servletRequest, List<String> regexpsFromConfig) {
+    public XSSRequestWrapper(HttpServletRequest servletRequest, List<String> regexps, String replaceValue) {
         super(servletRequest);
 
+        // value passed from config ?
+        if (replaceValue != null) {
+        	this.regexReplaceValue = replaceValue;
+        }
+
         // set up patterns from configuration
-        if (regexpsFromConfig != null) {
-        	List<Pattern> tmpPatterns = new ArrayList<Pattern>();
+        if (regexps != null) {
+        	List<Pattern> myPatterns = new ArrayList<Pattern>();
         	
-        	for (String regexp : regexpsFromConfig) {
-        		tmpPatterns.add(
+        	for (String regexp : regexps) {
+        		myPatterns.add(
             		Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL));        		
         	}
         	
-        	if (tmpPatterns.size() > 0) {
-        		patterns = tmpPatterns.toArray(new Pattern[tmpPatterns.size()]);
+        	if (myPatterns.size() > 0) {
+        		this.patterns = myPatterns.toArray(new Pattern[myPatterns.size()]);
         	}
         }
     }
@@ -132,7 +142,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
  
             // Remove all sections that match a pattern
             for (Pattern scriptPattern : patterns){
-                value = scriptPattern.matcher(value).replaceAll("");
+                value = scriptPattern.matcher(value).replaceAll(regexReplaceValue);
             }
 
             if (!origValue.equals(value)) {
