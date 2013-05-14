@@ -38,6 +38,11 @@ public class XSSFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        chain.doFilter(new XSSRequestWrapper((HttpServletRequest) request, xssUtil), response);
+
+    	if (request instanceof HttpServletRequest) {
+    		request = new XSSRequestWrapper((HttpServletRequest) request, xssUtil);
+        }
+
+        chain.doFilter(request, response);
     }
 }

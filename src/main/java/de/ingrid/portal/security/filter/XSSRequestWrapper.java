@@ -24,17 +24,17 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public String[] getParameterValues(String parameter) {
-        String[] values = super.getParameterValues(parameter);
-    	return xssUtil.stripParameterValues(values);
-    }
- 
-    @Override
     public String getParameter(String parameter) {
-        String value = super.getParameter(parameter); 
-    	return xssUtil.stripParameter(value);
+        String value = super.getParameter(parameter);
+    	return xssUtil.stripParameter(value, parameter);
     }
 
+    @Override
+    public String[] getParameterValues(String parameter) {
+        String[] values = super.getParameterValues(parameter);
+    	return xssUtil.stripParameterValues(values, parameter);
+    }
+ 
     @Override
 	public Map getParameterMap() {
         Map origMap = super.getParameterMap();
@@ -44,6 +44,6 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public String getHeader(String name) {
         String value = super.getHeader(name);
-    	return xssUtil.stripParameter(value);
+    	return xssUtil.stripHeader(value, name);
     }
 }

@@ -111,18 +111,20 @@ public class XSSUtil {
 	}
 
     /** Clear value from malicious code.
-     * @param values "infected" value
+     * @param value "infected" value
+     * @param name name of parameter for debugging purposes. Pass null if no name wanted.
      * @return cleared value
      */
-    public String stripParameter(String value) {
-        return stripXSS(value);
+    public String stripParameter(String value, String name) {
+        return stripXSS(value, name);
     }
 
     /** Clear values from malicious code.
      * @param values "infected" values
+     * @param name name of parameter for debugging purposes. Pass null if no name wanted.
      * @return cleared values
      */
-    public String[] stripParameterValues(String[] values) {
+    public String[] stripParameterValues(String[] values, String name) {
         if (values == null) {
             return null;
         }
@@ -130,7 +132,7 @@ public class XSSUtil {
         int count = values.length;
         String[] encodedValues = new String[count];
         for (int i = 0; i < count; i++) {
-            encodedValues[i] = stripParameter(values[i]);
+            encodedValues[i] = stripParameter(values[i], name);
         }
  
         return encodedValues;
@@ -149,7 +151,7 @@ public class XSSUtil {
             Object key = entry.getKey();
             Object value = entry.getValue();
             if (value != null && String.class.isAssignableFrom(value.getClass())) {
-            	value = stripParameter(value.toString());
+            	value = stripParameter(value.toString(), key.toString());
             }
             
             retMap.put(key, value);
@@ -158,8 +160,17 @@ public class XSSUtil {
         return retMap;
     }
 
+    /** Clear value from malicious code.
+     * @param value "infected" value
+     * @param name name of header for debugging purposes. Pass null if no name wanted.
+     * @return cleared value
+     */
+    public String stripHeader(String value, String name) {
+        return stripXSS(value, name);
+    }
+
     /** Clear the given "infected" value. */
-    private String stripXSS(String value) {
+    private String stripXSS(String value, String name) {
     	if (value == null) {
             return null;    		
     	}
@@ -180,7 +191,7 @@ public class XSSUtil {
         }
 
         if (!origValue.equals(value)) {
-        	LOG.warn("!!! Stripped request header/parameter value ");
+        	LOG.warn("!!! Stripped request header/parameter \"" + name + "\"");
         	LOG.warn("from \"" + origValue + "\"");
         	LOG.warn("to   \"" + value + "\"");
         }
