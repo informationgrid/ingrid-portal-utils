@@ -150,14 +150,71 @@ public class XSSUtil {
             Map.Entry entry = (Map.Entry)it.next();
             Object key = entry.getKey();
             Object value = entry.getValue();
-            if (value != null && String.class.isAssignableFrom(value.getClass())) {
-            	value = stripParameter(value.toString(), key.toString());
+            if (value != null) {
+            	if (String.class.isAssignableFrom(value.getClass())) {
+                	value = stripParameter(value.toString(), key.toString());
+            	} else if (String[].class.isAssignableFrom(value.getClass())) {
+                	value = stripParameterValues((String[])value, key.toString());
+            	}
             }
-            
+
             retMap.put(key, value);
         }
 
         return retMap;
+    }
+
+    /** DEBUG level: output of parameter key/value pairs in map ! */
+    public void debugParameterMap(Map parameterMap) {
+    	if (parameterMap == null)
+    		return;
+        if (!LOG.isDebugEnabled())
+        	return;
+
+        String output = null;
+        Iterator it = parameterMap.entrySet().iterator();
+        while (it.hasNext()) {
+        	if (output == null) {
+        		output = "";
+        	}
+
+            Map.Entry entry = (Map.Entry)it.next();
+            Object key = entry.getKey();
+            String outputEntry = null;
+            String[] values = (String[]) entry.getValue();
+            if (values != null) {
+            	outputEntry = "[";
+            	for (String value : values) {
+            		outputEntry = outputEntry + "\"" + value + "\","; 
+            	}
+            	outputEntry = outputEntry + "]";
+            }
+            outputEntry = "\"" + key + "\" / " + outputEntry;
+            output = output + "\n" + outputEntry;
+        }
+        if (output != null) {
+            LOG.debug("ParameterMap: " + output);        	
+        }
+    }
+
+    /** DEBUG level: output of attribute names in request ! */
+    public void debugAttributeNames(Enumeration attributeNames) {
+    	if (attributeNames == null)
+    		return;
+        if (!LOG.isDebugEnabled())
+        	return;
+
+        String output = null;
+        while (attributeNames.hasMoreElements()) {
+        	if (output == null) {
+        		output = "[";
+        	}
+        	output = output + "\"" + attributeNames.nextElement() + "\",";
+        	output = output + "]";
+        }
+        if (output != null) {
+            LOG.debug("AttributeNames: " + output);
+        }
     }
 
     /** Clear value from malicious code.
