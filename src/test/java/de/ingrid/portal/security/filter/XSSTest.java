@@ -15,10 +15,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import junit.framework.TestCase;
+
+import org.apache.log4j.Logger;
+
 import de.ingrid.portal.security.util.XSSUtil;
 
 public class XSSTest extends TestCase {
 	
+	private static final Logger LOG = Logger.getLogger(XSSTest.class);
+
 	/** Mocked FilterConfig containing regexps for external configuration ! */
 	FilterConfig filterConfigMocked = null;
 
@@ -101,23 +106,28 @@ public class XSSTest extends TestCase {
 
 	public void testXSSRequestWrapper() {
 		// Map containing all "infected" XSS parameter
-		Map<String, String> reqParamsMap = new HashMap<String, String>();
+		Map<String, String[]> reqParamsMap = new HashMap<String, String[]>();
 		for (int i=0; i<paramValuesInfected.length; i++) {
 			String paramName = "param"+i;
-			reqParamsMap.put(paramName, paramValuesInfected[i]);			
+			reqParamsMap.put(paramName, new String[] { paramValuesInfected[i] });
 		}
 
 		// mock request with infected parameters
 		HttpServletRequest requestMocked = mock(HttpServletRequest.class);
 		for (String paramName: reqParamsMap.keySet()) {
-			when(requestMocked.getHeader(paramName)).thenReturn(reqParamsMap.get(paramName));
-			when(requestMocked.getParameter(paramName)).thenReturn(reqParamsMap.get(paramName));
-			when(requestMocked.getParameterValues(paramName)).thenReturn(new String[] { reqParamsMap.get(paramName) });
+			when(requestMocked.getHeader(paramName)).thenReturn(reqParamsMap.get(paramName)[0]);
+			when(requestMocked.getParameter(paramName)).thenReturn(reqParamsMap.get(paramName)[0]);
+			when(requestMocked.getParameterValues(paramName)).thenReturn(reqParamsMap.get(paramName));
 			when(requestMocked.getParameterMap()).thenReturn(reqParamsMap);
 	    }
 
-		// our request wrapper stripping values WITH DEFAULT CONFIGURATION !
+		// output !
 		XSSUtil xssUtil = new XSSUtil();
+		LOG.debug("INFECTED ParameterMap from request");
+		xssUtil.debugParameterMap(requestMocked.getParameterMap());
+
+		// our request wrapper stripping values WITH DEFAULT CONFIGURATION !
+		xssUtil.clear();
 		HttpServletRequestWrapper xssReq = new XSSRequestWrapper(requestMocked, xssUtil);		
 		checkRequest(xssReq, xssUtil.getRegexReplaceValue());
 
@@ -126,6 +136,9 @@ public class XSSTest extends TestCase {
         xssUtil.parseFilterConfig(filterConfigMocked);
 		xssReq = new XSSRequestWrapper(requestMocked, xssUtil);
 		checkRequest(xssReq, confReplaceValue);
+		Map clearedMap = xssReq.getParameterMap();
+		LOG.debug("CLEARED ParameterMap from request");
+		xssUtil.debugParameterMap(clearedMap);
     }
 
 	private void checkRequest(HttpServletRequestWrapper req, String replaceValue) {
@@ -138,7 +151,7 @@ public class XSSTest extends TestCase {
 	        assertEquals(paramValueStripped, req.getHeader(paramName));
 	        assertEquals(paramValueStripped, req.getParameter(paramName));
 	        assertEquals(paramValueStripped, req.getParameterValues(paramName)[0]);
-	        assertEquals(paramValueStripped, req.getParameterMap().get(paramName));
+	        assertEquals(paramValueStripped, ((String[])req.getParameterMap().get(paramName))[0]);
 		}		
 	}
 }

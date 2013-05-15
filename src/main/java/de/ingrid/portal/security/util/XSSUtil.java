@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.FilterConfig;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
@@ -151,17 +152,95 @@ public class XSSUtil {
             Object key = entry.getKey();
             Object value = entry.getValue();
             if (value != null) {
+            	// value is always String[]
+            	value = stripParameterValues((String[])value, key.toString());
+/*
             	if (String.class.isAssignableFrom(value.getClass())) {
                 	value = stripParameter(value.toString(), key.toString());
             	} else if (String[].class.isAssignableFrom(value.getClass())) {
                 	value = stripParameterValues((String[])value, key.toString());
             	}
+*/
             }
 
             retMap.put(key, value);
         }
 
         return retMap;
+    }
+
+    /** Clear value from malicious code.
+     * @param value "infected" value
+     * @param name name of header for debugging purposes. Pass null if no name wanted.
+     * @return cleared value
+     */
+    public String stripHeader(String value, String name) {
+        return stripXSS(value, name);
+    }
+
+    /** Clear the given "infected" value.
+     * The matching regexps will be replaced with our "replace value" (can be set via FilterConfig).
+     * @param value "infected" value ?
+     * @param name name of parameter containing the value for debugging purposes. Pass null if not needed.
+     * @return stripped value
+     */
+    private String stripXSS(String value, String name) {
+    	if (value == null) {
+            return null;    		
+    	}
+
+    	String origValue = value;
+
+        // NOTE: It's highly recommended to use the ESAPI library and uncomment the following line to
+        // avoid encoded attacks.
+    	// Needs huge ESAPI.properties file ! We skip this !
+        //value = ESAPI.encoder().canonicalize(value);
+
+        // Avoid null characters
+        value = value.replaceAll("\0", "");
+
+        // Remove all sections that match a pattern
+        for (Pattern scriptPattern : patterns){
+            value = scriptPattern.matcher(value).replaceAll(regexReplaceValue);
+        }
+
+        if (!origValue.equals(value)) {
+        	LOG.warn("!!! Stripped request header/parameter \"" + name + "\"");
+        	LOG.warn("from \"" + origValue + "\"");
+        	LOG.warn("to   \"" + value + "\"");
+        }
+
+        return value;
+    }
+
+	/** Get the value the matching regular expressions will be replaced with ! */
+	public String getRegexReplaceValue() {
+		return regexReplaceValue;
+	}
+
+	/** Set the value the matching regular expressions will be replaced with ! */
+	public void setRegexReplaceValue(String regexReplaceValue) {
+		this.regexReplaceValue = regexReplaceValue;
+	}
+
+	/** Just for Unit tests to check read regexps ! */
+	public List<String> getRegexpFromConfig() {
+		return regexpFromConfig;
+	}
+
+	
+    /** DEBUG level: output of parameters, attributes */
+    public void debugRequest(HttpServletRequest hreq) {
+    	if (hreq == null)
+    		return;
+        if (!LOG.isDebugEnabled())
+        	return;
+
+		LOG.debug("--------------------");
+		LOG.debug("New Request: " + hreq.getClass());
+		debugParameterMap(hreq.getParameterMap());
+		debugAttributeNames(hreq.getAttributeNames());
+		LOG.debug("--------------------");
     }
 
     /** DEBUG level: output of parameter key/value pairs in map ! */
@@ -216,58 +295,4 @@ public class XSSUtil {
             LOG.debug("AttributeNames: " + output);
         }
     }
-
-    /** Clear value from malicious code.
-     * @param value "infected" value
-     * @param name name of header for debugging purposes. Pass null if no name wanted.
-     * @return cleared value
-     */
-    public String stripHeader(String value, String name) {
-        return stripXSS(value, name);
-    }
-
-    /** Clear the given "infected" value. */
-    private String stripXSS(String value, String name) {
-    	if (value == null) {
-            return null;    		
-    	}
-
-    	String origValue = value;
-
-        // NOTE: It's highly recommended to use the ESAPI library and uncomment the following line to
-        // avoid encoded attacks.
-    	// Needs huge ESAPI.properties file ! We skip this !
-        //value = ESAPI.encoder().canonicalize(value);
-
-        // Avoid null characters
-        value = value.replaceAll("\0", "");
-
-        // Remove all sections that match a pattern
-        for (Pattern scriptPattern : patterns){
-            value = scriptPattern.matcher(value).replaceAll(regexReplaceValue);
-        }
-
-        if (!origValue.equals(value)) {
-        	LOG.warn("!!! Stripped request header/parameter \"" + name + "\"");
-        	LOG.warn("from \"" + origValue + "\"");
-        	LOG.warn("to   \"" + value + "\"");
-        }
-
-        return value;
-    }
-
-	/** Get the value the matching regular expressions will be replaced with ! */
-	public String getRegexReplaceValue() {
-		return regexReplaceValue;
-	}
-
-	/** Set the value the matching regular expressions will be replaced with ! */
-	public void setRegexReplaceValue(String regexReplaceValue) {
-		this.regexReplaceValue = regexReplaceValue;
-	}
-
-	/** Just for Unit tests to check read regexps ! */
-	public List<String> getRegexpFromConfig() {
-		return regexpFromConfig;
-	}
 }

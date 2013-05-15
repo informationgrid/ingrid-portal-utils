@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import de.ingrid.portal.security.util.XSSUtil;
  
+/** Our request wrapper subclassing get methods for stripping of malicous
+ * content in parameter, header ...
+ * This way we can process all content (also POST values).
+ */
 public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	/** Our helper for security operations ! */
@@ -25,14 +29,14 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getParameter(String parameter) {
-        String value = super.getParameter(parameter);
-    	return xssUtil.stripParameter(value, parameter);
+        String origValue = super.getParameter(parameter);
+    	return xssUtil.stripParameter(origValue, parameter);
     }
 
     @Override
     public String[] getParameterValues(String parameter) {
-        String[] values = super.getParameterValues(parameter);
-    	return xssUtil.stripParameterValues(values, parameter);
+        String[] origValues = super.getParameterValues(parameter);
+    	return xssUtil.stripParameterValues(origValues, parameter);
     }
  
     @Override
@@ -43,7 +47,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getHeader(String name) {
-        String value = super.getHeader(name);
-    	return xssUtil.stripHeader(value, name);
+        String origValue = super.getHeader(name);
+    	return xssUtil.stripHeader(origValue, name);
     }
 }
