@@ -40,6 +40,12 @@ public class XSSFilter implements Filter {
         throws IOException, ServletException {
 
     	if (request instanceof HttpServletRequest) {
+    		if (LOG.isDebugEnabled()) {
+    			LOG.debug("New Request: " + request.getClass());
+        		xssUtil.debugParameterMap(request.getParameterMap());
+        		xssUtil.debugAttributeNames(request.getAttributeNames());
+    		}
+
     		request = new XSSRequestWrapper((HttpServletRequest) request, xssUtil);
         }
 
