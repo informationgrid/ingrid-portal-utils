@@ -1,5 +1,7 @@
 package de.ingrid.portal.security.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -83,15 +85,15 @@ public class XSSUtil {
         		String paramValue = filterConfig.getInitParameter(paramName);
         		
         		if (REPLACE_VALUE_PARAM_NAME.equals(paramName)) {
-        			if (LOG.isDebugEnabled()) {
-                    	LOG.debug("Passed replaceValue from web.xml: \"" + paramValue + "\"");
+        			if (LOG.isInfoEnabled()) {
+                    	LOG.info("Passed replaceValue from web.xml: \"" + paramValue + "\"");
                     }
 
         			setRegexReplaceValue(paramValue);
 
         		} else {
-                    if (LOG.isDebugEnabled()) {
-                    	LOG.debug("Passed regex from web.xml: \"" + paramValue + "\"");
+                    if (LOG.isInfoEnabled()) {
+                    	LOG.info("Passed regex from web.xml: \"" + paramValue + "\"");
                     }
 
                     myRegexps.add(paramValue);
@@ -107,9 +109,31 @@ public class XSSUtil {
             		this.patterns.add(
                 		Pattern.compile(regexp, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL));        		
             	}
+        	} else {
+                if (LOG.isInfoEnabled()) {
+                	LOG.info("No regex passed from web.xml, we use our DEFAULT regexps for XSS filtering");
+                }        		
         	}
         }
 	}
+
+    /** HTML form decoding. Decode a String from the application/x-www-form-urlencoded MIME format.
+     * Use this method for decoding of requests Query Strings etc. before checking whether malicious content. 
+     * @param encodedValue the encoded value, e.g. "%3C" instead of "<"
+     * @return decoded value, e.g. "<" instead of "%3C" 
+     */
+    public String urlDecode(String encodedValue) {
+    	if (encodedValue == null) {
+    		return encodedValue;
+    	}
+
+    	try {
+    		return URLDecoder.decode(encodedValue, "UTF-8");
+    	}
+    	catch (UnsupportedEncodingException e) {
+    		throw new RuntimeException("Error in urlDecode.", e);
+    	}
+    }
 
     /** Clear value from malicious code.
      * @param value "infected" value
@@ -211,6 +235,37 @@ public class XSSUtil {
         }
 
         return value;
+    }
+
+    /** Check whether the passed value has malicious content.
+     * Call urlDecode() before calling this method if value from URL etc.
+     * Is checked against all our regexps (after null characters are removed) !
+     * If one matches then value is considered malicious !
+     * @param value "infected" content ?
+     * @return true=malicious, false=is ok
+     */
+    public boolean containsXSS(String value) {
+    	if (value == null) {
+            return false;    		
+    	}
+
+        // NOTE: It's highly recommended to use the ESAPI library and uncomment the following line to
+        // avoid encoded attacks.
+    	// Needs huge ESAPI.properties file ! We skip this !
+        //value = ESAPI.encoder().canonicalize(value);
+
+        // Avoid null characters
+        value = value.replaceAll("\0", "");
+
+        // If pattern found we have malicious content.
+        for (Pattern scriptPattern : patterns){
+            if (scriptPattern.matcher(value).find()) {
+            	LOG.warn("MALICIOUS content found (matches regexp of XSSFilter) ! -> \"" + value + "\"");
+            	return true;
+            }
+        }
+
+        return false;
     }
 
 	/** Get the value the matching regular expressions will be replaced with ! */

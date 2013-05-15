@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
@@ -40,15 +41,38 @@ public class XSSFilter implements Filter {
         throws IOException, ServletException {
 
     	if (request instanceof HttpServletRequest) {
+            HttpServletRequest hreq = (HttpServletRequest) request;
+
     		if (LOG.isDebugEnabled()) {
-    			LOG.debug("New Request: " + request.getClass());
-        		xssUtil.debugParameterMap(request.getParameterMap());
-        		xssUtil.debugAttributeNames(request.getAttributeNames());
+        		xssUtil.debugRequest(hreq);
     		}
 
-    		request = new XSSRequestWrapper((HttpServletRequest) request, xssUtil);
+            if (isInvalid(hreq.getQueryString()) || isInvalid(hreq.getRequestURI()))
+            {
+                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST);
+            }
+
+            // DO NOT WRAP ! PROBLEMS WITH PORTAL LOGIN AFTERWARDS ! :(((((((((
+            // So we can't process POST parameters !!!
+//    		request = new XSSRequestWrapper(hreq, xssUtil);
         }
 
         chain.doFilter(request, response);
     }
+
+    private boolean isInvalid(String value)
+    {
+    	if (value == null) {
+    		return false;
+    	}
+    	
+    	String decodedValue = xssUtil.urlDecode(value);
+
+		if (xssUtil.containsXSS(decodedValue)) {
+			return true;
+		}
+		
+		return false;
+    }
+
 }
