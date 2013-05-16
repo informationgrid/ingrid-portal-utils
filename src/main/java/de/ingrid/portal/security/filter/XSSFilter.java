@@ -49,7 +49,13 @@ public class XSSFilter implements Filter {
 
             if (isInvalid(hreq.getQueryString()) || isInvalid(hreq.getRequestURI()))
             {
-                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST);
+               	LOG.warn("Send response SC_BAD_REQUEST in XSSFilter !");
+            	HttpServletResponse hresp = (HttpServletResponse) response;
+            	if (!hresp.isCommitted()) {
+                    hresp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            	} else {
+            		LOG.warn("Servlet response already committed, we DO NOT send error SC_BAD_REQUEST (cause already checked by other filter !?)");
+            	}
             }
 
             // DO NOT WRAP ! PROBLEMS WITH PORTAL LOGIN AFTERWARDS ! :(((((((((
