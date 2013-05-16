@@ -24,8 +24,8 @@ public class XSSFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        if (LOG.isDebugEnabled()) {
-        	LOG.debug("Initializing XSSFilter !");
+        if (LOG.isInfoEnabled()) {
+        	LOG.info("Initializing XSSFilter !");
         }
         
         xssUtil.clear();
