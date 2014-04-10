@@ -86,6 +86,32 @@ public class IngridProviderPermissionTest extends TestCase {
         assertEquals(true, ps.implies(new IngridPermission("permission1", "view,edit")));
         assertEquals(true, ps.implies(new IngridPermission("permission1", "edit")));
         assertEquals(true, ps.implies(new IngridPermission("permission1", "view")));
+        // new resource, nothing defined, NO permission
+        assertEquals(false, ps.implies(new IngridProviderPermission("provider.ni", "view")));
+
+        // top all allowed !
+        p = new IngridProviderPermission("*", "view, edit");
+        assertEquals("*", p.getProvider());
+        ps.add(p);
+        // sub resources only view
+        p = new IngridProviderPermission("provider.he", "view");
+        ps.add(p);
+        en = ps.elements();
+        cnt = 0;
+        while (en.hasMoreElements()) {
+            cnt++;
+            en.nextElement();
+        }
+        assertEquals(4, cnt);
+        // sub resource no edit !
+        assertEquals(false, ps.implies(new IngridProviderPermission("provider.he", "view,edit")));
+        assertEquals(false, ps.implies(new IngridProviderPermission("provider.he", "edit")));
+        assertEquals(true, ps.implies(new IngridProviderPermission("provider.he", "view")));
+        // but NEW sub resource all allowed cause top no restriction !
+        assertEquals(true, ps.implies(new IngridProviderPermission("provider.ni", "view,edit")));
+        assertEquals(true, ps.implies(new IngridProviderPermission("provider.ni", "edit")));
+        assertEquals(true, ps.implies(new IngridProviderPermission("provider.ni", "view")));
+
     }
 
 

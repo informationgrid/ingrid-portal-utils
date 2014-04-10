@@ -63,7 +63,7 @@ public class IngridPartnerPermissionTest extends TestCase {
         p = new IngridPartnerPermission("partner.he", "view, edit");
         ps.add(p);
         
-        // also IngridPermission !
+        // also add IngridPermission to collection !
         ps.add(new IngridPermission("permission1", "view, edit"));
         en = ps.elements();
         cnt = 0;
@@ -79,6 +79,31 @@ public class IngridPartnerPermissionTest extends TestCase {
         assertEquals(true, ps.implies(new IngridPermission("permission1", "view,edit")));
         assertEquals(true, ps.implies(new IngridPermission("permission1", "edit")));
         assertEquals(true, ps.implies(new IngridPermission("permission1", "view")));
+        // new resource, nothing defined, NO permission
+        assertEquals(false, ps.implies(new IngridPartnerPermission("partner.ni", "view")));
+
+        // top all allowed !
+        p = new IngridPartnerPermission("*", "view, edit");
+        assertEquals("*", p.getPartner());
+        ps.add(p);
+        // sub resources only view
+        p = new IngridPartnerPermission("partner.he", "view");
+        ps.add(p);
+        en = ps.elements();
+        cnt = 0;
+        while (en.hasMoreElements()) {
+            cnt++;
+            en.nextElement();
+        }
+        assertEquals(3, cnt);
+        // sub resource no edit !
+        assertEquals(false, ps.implies(new IngridPartnerPermission("partner.he", "view,edit")));
+        assertEquals(false, ps.implies(new IngridPartnerPermission("partner.he", "edit")));
+        assertEquals(true, ps.implies(new IngridPartnerPermission("partner.he", "view")));
+        // but NEW sub resource all allowed cause top no restriction !
+        assertEquals(true, ps.implies(new IngridPartnerPermission("permission3", "view,edit")));
+        assertEquals(true, ps.implies(new IngridPartnerPermission("permission3", "edit")));
+        assertEquals(true, ps.implies(new IngridPartnerPermission("permission3", "view")));
     }
 
 }

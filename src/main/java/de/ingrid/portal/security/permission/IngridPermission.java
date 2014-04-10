@@ -84,8 +84,14 @@ public class IngridPermission extends BaseJetspeedPermission {
                 offset = last -1;
             }
 
-            // we don't have to check for "*" as it was already checked
-            // at the top (all_allowed), so we just return false
+            // check for "*"
+            synchronized (this) {
+                x = perms.get("*");
+            }
+            if (x != null) {
+                return x.implies(permission);
+            }
+            
             return false;
         }
     }
