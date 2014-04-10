@@ -14,15 +14,33 @@
     <connection>scm:svn:https://harrison.its-technidata.de:444/svn/ingrid/ingrid-portal-utils/branches/ingrid-portal-utils-3.5_REDMINE-304_JetspeedMigration</connection>
     <developerConnection>scm:svn:https://harrison.its-technidata.de:444/svn/ingrid/ingrid-portal-utils/branches/ingrid-portal-utils-3.5_REDMINE-304_JetspeedMigration</developerConnection>
   </scm>
+
+  <properties>
+    <org.apache.portals.jetspeed.version>2.2.3-SNAPSHOT</org.apache.portals.jetspeed.version>
+<!--
+    <org.apache.portals.jetspeed.version>2.2.2</org.apache.portals.jetspeed.version>
+-->
+    <portals.portlet2-api-spec.version>1.0</portals.portlet2-api-spec.version>
+  </properties>
+
+  <!-- ==================== DEPENDENCY MANAGEMENT ==================== -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.portals.jetspeed-2</groupId>
+        <artifactId>jetspeed-security</artifactId>
+        <version>${org.apache.portals.jetspeed.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.portals.jetspeed-2</groupId>
+        <artifactId>jetspeed-api</artifactId>
+        <version>${org.apache.portals.jetspeed.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+    <!-- ==================== DEPENDENCIES ==================== -->
   <dependencies>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.apache.portals.jetspeed-2</groupId>
       <artifactId>jetspeed-security</artifactId>
@@ -31,11 +49,14 @@
       <groupId>org.apache.portals.jetspeed-2</groupId>
       <artifactId>jetspeed-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+    <!-- Needed for unit tests runtime -->
+      <dependency>
+        <groupId>org.apache.portals</groupId>
+        <artifactId>portlet-api_2.0_spec</artifactId>
+        <version>${portals.portlet2-api-spec.version}</version>
+        <scope>test</scope>
+      </dependency>
+
 <!-- Enable when ESAPI used in XSSRequestWrapper -->
 <!--
     <dependency>
@@ -44,6 +65,19 @@
         <version>2.0.1</version>
     </dependency>
 -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -55,6 +89,7 @@
         <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>

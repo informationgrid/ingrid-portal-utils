@@ -18,12 +18,14 @@ public class IngridPortalPermission extends IngridPermission {
 
     private static final long serialVersionUID = 7405952399854216045L;
 
+    private static final String INGRID_PORTAL_PERMISSION = "ingrid_portal";
+
     public IngridPortalPermission(String name) {
-        super(name, "*");
+        super(INGRID_PORTAL_PERMISSION, name, "*");
     }
 
     public IngridPortalPermission(String name, String actions) {
-        super(name, actions);
+        super(INGRID_PORTAL_PERMISSION, name, actions);
     }
     
 }

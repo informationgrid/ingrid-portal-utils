@@ -32,6 +32,8 @@ public class IngridProviderPermission extends IngridPermission {
 
     private static final long serialVersionUID = 7405952399854216041L;
 
+    private static final String INGRID_PROVIDER_PERMISSION = "ingrid_provider";
+
     /**
      * Constructor
      * 
@@ -41,7 +43,7 @@ public class IngridProviderPermission extends IngridPermission {
      *            The providers actions (comma separated list)
      */
     public IngridProviderPermission(String provider, String actions) {
-        super(provider, actions);
+        super(INGRID_PROVIDER_PERMISSION, provider, actions);
     }
 
     /**
@@ -51,7 +53,7 @@ public class IngridProviderPermission extends IngridPermission {
      *            The providers name.
      */
     public IngridProviderPermission(String provider) {
-        super(provider, "*");
+        super(INGRID_PROVIDER_PERMISSION, provider, "*");
     }
 
     /**

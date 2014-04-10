@@ -92,6 +92,7 @@ public class IngridPermissionTest extends TestCase {
         Permissions ps = new Permissions();
         IngridPermission p = new IngridPermission("permission1", "view, edit");
         ps.add(p);
+        // NOTICE: REPLACES upper permission !
         p = new IngridPermission("permission1", "view");
         ps.add(p);
         p = new IngridPermission("permission2", "view");
@@ -104,6 +105,21 @@ public class IngridPermissionTest extends TestCase {
         }
         assertEquals(2, cnt);
         assertEquals(false, ps.implies(new IngridPermission("permission1", "view, edit")));
+        assertEquals(true, ps.implies(new IngridPermission("permission1", "view")));
+        assertEquals(true, ps.implies(new IngridPermission("permission2", "view")));
+        assertEquals(false, ps.implies(new IngridPermission("permission2", "edit")));
+
+        p = new IngridPermission("permission1", "view, edit");
+        ps.add(p);
+        en = ps.elements();
+        cnt = 0;
+        while (en.hasMoreElements()) {
+            cnt++;
+            en.nextElement();
+        }
+        assertEquals(2, cnt);
+        assertEquals(true, ps.implies(new IngridPermission("permission1", "view,edit")));
+        assertEquals(true, ps.implies(new IngridPermission("permission1", "edit")));
         assertEquals(true, ps.implies(new IngridPermission("permission1", "view")));
     }
 

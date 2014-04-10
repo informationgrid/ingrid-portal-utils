@@ -30,6 +30,8 @@ public class IngridPartnerPermission extends IngridPermission {
 
     private static final long serialVersionUID = 7405952399854216042L;
 
+    private static final String INGRID_PARTNER_PERMISSION = "ingrid_partner";
+
     /**
      * Constructor
      * 
@@ -39,7 +41,7 @@ public class IngridPartnerPermission extends IngridPermission {
      *            The actions for the permission (comma separated list).
      */
     public IngridPartnerPermission(String partner, String actions) {
-        super(partner, actions);
+        super(INGRID_PARTNER_PERMISSION, partner, actions);
     }
 
     /**
@@ -48,7 +50,7 @@ public class IngridPartnerPermission extends IngridPermission {
      * @param partner
      */
     public IngridPartnerPermission(String partner) {
-        super(partner, "*");
+        super(INGRID_PARTNER_PERMISSION, partner, "*");
     }
 
     /**
