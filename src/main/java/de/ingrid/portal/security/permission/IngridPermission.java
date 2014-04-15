@@ -12,7 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.jetspeed.security.spi.PersistentJetspeedPermission;
 import org.apache.jetspeed.security.spi.impl.BaseJetspeedPermission;
+import org.apache.jetspeed.security.spi.impl.JetspeedPermissionFactory;
 
 /**
  * General Ingrid permission class. Represents a permission with the parameter 
@@ -23,6 +25,10 @@ import org.apache.jetspeed.security.spi.impl.BaseJetspeedPermission;
  * @author joachim@wemove.com
  */
 public class IngridPermission extends BaseJetspeedPermission {
+
+	private static final long serialVersionUID = 2246210603932755952L;
+    
+    private static final String INGRID_PERMISSION = "ingrid";
 
     /** Simulate BasicPermissionCollection ! This one is returned when collection for this permission is requested ! */
     private static class IngridPermissionCollection extends PermissionCollection
@@ -96,9 +102,29 @@ public class IngridPermission extends BaseJetspeedPermission {
         }
     }
 
-	private static final long serialVersionUID = 2246210603932755952L;
-    
-    private static final String INGRID_PERMISSION = "ingrid";
+    public static class Factory extends JetspeedPermissionFactory
+    {
+        public Factory() {
+            super(INGRID_PERMISSION);
+        }
+
+        public IngridPermission newPermission(String name, String actions) {
+            return new IngridPermission(getType(), name, ("*".equals(actions)?"view,edit":actions));
+        }
+
+        public IngridPermission newPermission(String name, int mask)
+        {
+            return new IngridPermission(getType(), name, mask);
+        }
+
+        public IngridPermission newPermission(PersistentJetspeedPermission permission)
+        {
+            if (permission.getType().equals(getType())) {
+                return new IngridPermission(permission);
+            }
+            throw new IllegalArgumentException("Permission is not of type "+getType());
+        }
+    }
 
     /** encapsulated BasicPermission used for handling of name ! */
     protected BasicPermission myBasicPermission = null;
@@ -118,23 +144,23 @@ public class IngridPermission extends BaseJetspeedPermission {
     private String parsedActions = null;
     
     /** Create an ingrid permission !
-     * @param name resource the permission applies to e.g. "admin.portal"
-     * @param actions "*" will be replaced with "view,edit" to match Jetspeed actions and avoid exception ! 
-     */
-    public IngridPermission(String name, String actions) {
-    	this(INGRID_PERMISSION, name, actions);
-    }
-
-    /** Create an ingrid permission !
      * @param type type of permission used for jetspeed !
      * @param name resource the permission applies to e.g. "admin.portal"
      * @param actions "*" will be replaced with "view,edit" to match Jetspeed actions and avoid exception ! 
      */
-    public IngridPermission(String type, String name, String actions) {
+    protected IngridPermission(String type, String name, String actions) {
     	// we have to replace "*" cause "*" action unknown to jetspeed, see JetspeedActions
         super(type, name, ("*".equals(actions)?"view,edit":actions));
         this.myBasicPermission = new BasicPermission(name) {};
-        this.parsedActions = parseActions(actions);
+        this.parsedActions = parseActions(getActions());
+    }
+
+    protected IngridPermission(String type, String name, int mask) {
+        super(type, name, mask);
+    }
+
+    protected IngridPermission(PersistentJetspeedPermission permission) {
+        super(permission);
     }
 
     /**

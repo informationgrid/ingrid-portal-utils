@@ -3,6 +3,9 @@
  */
 package de.ingrid.portal.security.permission;
 
+import org.apache.jetspeed.security.spi.PersistentJetspeedPermission;
+import org.apache.jetspeed.security.spi.impl.JetspeedPermissionFactory;
+
 /**
  * This class represent the portal permissions that are not further
  * restriced for partner or providers.
@@ -20,12 +23,40 @@ public class IngridPortalPermission extends IngridPermission {
 
     private static final String INGRID_PORTAL_PERMISSION = "ingrid_portal";
 
-    public IngridPortalPermission(String name) {
-        super(INGRID_PORTAL_PERMISSION, name, "*");
+    public static class Factory extends JetspeedPermissionFactory
+    {
+        public Factory() {
+            super(INGRID_PORTAL_PERMISSION);
+        }
+
+        public IngridPortalPermission newPermission(String name, String actions) {
+            return new IngridPortalPermission(getType(), name, actions);
+        }
+
+        public IngridPortalPermission newPermission(String name, int mask)
+        {
+            return new IngridPortalPermission(getType(), name, mask);
+        }
+
+        public IngridPortalPermission newPermission(PersistentJetspeedPermission permission)
+        {
+            if (permission.getType().equals(getType())) {
+                return new IngridPortalPermission(permission);
+            }
+            throw new IllegalArgumentException("Permission is not of type "+getType());
+        }
     }
 
-    public IngridPortalPermission(String name, String actions) {
-        super(INGRID_PORTAL_PERMISSION, name, actions);
+    protected IngridPortalPermission(String type, String provider, String actions) {
+        super(type, provider, actions);
+    }
+
+    protected IngridPortalPermission(String type, String name, int mask) {
+        super(type, name, mask);
+    }
+
+    protected IngridPortalPermission(PersistentJetspeedPermission permission) {
+        super(permission);
     }
     
 }

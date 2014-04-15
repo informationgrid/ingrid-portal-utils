@@ -5,6 +5,9 @@ package de.ingrid.portal.security.permission;
 
 import java.security.Permission;
 
+import org.apache.jetspeed.security.spi.PersistentJetspeedPermission;
+import org.apache.jetspeed.security.spi.impl.JetspeedPermissionFactory;
+
 /**
  * This class represent a responsibility permission for certain partner.
  * 
@@ -32,6 +35,34 @@ public class IngridPartnerPermission extends IngridPermission {
 
     private static final String INGRID_PARTNER_PERMISSION = "ingrid_partner";
 
+    public static class Factory extends JetspeedPermissionFactory
+    {
+        public Factory() {
+            super(INGRID_PARTNER_PERMISSION);
+        }
+
+        public IngridPartnerPermission newPermission(String name) {
+            return new IngridPartnerPermission(getType(), name, "*");
+        }
+
+        public IngridPartnerPermission newPermission(String name, String actions) {
+            return new IngridPartnerPermission(getType(), name, actions);
+        }
+
+        public IngridPartnerPermission newPermission(String name, int mask)
+        {
+            return new IngridPartnerPermission(getType(), name, mask);
+        }
+
+        public IngridPartnerPermission newPermission(PersistentJetspeedPermission permission)
+        {
+            if (permission.getType().equals(getType())) {
+                return new IngridPartnerPermission(permission);
+            }
+            throw new IllegalArgumentException("Permission is not of type "+getType());
+        }
+    }
+
     /**
      * Constructor
      * 
@@ -40,17 +71,16 @@ public class IngridPartnerPermission extends IngridPermission {
      * @param actions
      *            The actions for the permission (comma separated list).
      */
-    public IngridPartnerPermission(String partner, String actions) {
-        super(INGRID_PARTNER_PERMISSION, partner, actions);
+    protected IngridPartnerPermission(String type, String partner, String actions) {
+        super(type, partner, actions);
     }
 
-    /**
-     * Constructor
-     * 
-     * @param partner
-     */
-    public IngridPartnerPermission(String partner) {
-        super(INGRID_PARTNER_PERMISSION, partner, "*");
+    protected IngridPartnerPermission(String type, String name, int mask) {
+        super(type, name, mask);
+    }
+
+    protected IngridPartnerPermission(PersistentJetspeedPermission permission) {
+        super(permission);
     }
 
     /**
@@ -74,5 +104,4 @@ public class IngridPartnerPermission extends IngridPermission {
     public boolean implies(Permission permission) {
         return super.implies(permission, true);
     }
-
 }
