@@ -36,7 +36,6 @@ public class SecurityHelper {
      *            The JETSPEED role manager.
      * @return The merged Permissions.
      */
-    @SuppressWarnings("unchecked")
     public static Permissions getMergedPermissions(Principal p, PermissionManager permissionManager,
             RoleManager roleManager) {
         Permissions result = null;
