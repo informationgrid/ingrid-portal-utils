@@ -29,6 +29,10 @@ public class IngridPortalPermission extends IngridPermission {
             super(INGRID_PORTAL_PERMISSION);
         }
 
+        public IngridPortalPermission newPermission(String name) {
+            return new IngridPortalPermission(getType(), name, "*");
+        }
+
         public IngridPortalPermission newPermission(String name, String actions) {
             return new IngridPortalPermission(getType(), name, actions);
         }
