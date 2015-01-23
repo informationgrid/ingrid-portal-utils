@@ -122,7 +122,7 @@ public class XSSTest extends TestCase {
         
 		List<String> regexpsFromFilter = xssUtil.getRegexpFromConfig();
 		for (int i=0; i<confRegexps.length; i++) {
-			assertEquals(confRegexps[i], regexpsFromFilter.get(i));
+			assertTrue(regexpsFromFilter.contains( confRegexps[i] ));
 		}
     }
 
