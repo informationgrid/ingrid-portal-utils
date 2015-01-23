@@ -9,10 +9,10 @@
   <artifactId>ingrid-portal-utils</artifactId>
   <packaging>jar</packaging>
   <version>3.5.0-SNAPSHOT-R304</version>
-  <name>ingrid-portal-utils</name>
+  <name>InGrid Portal-Utils</name>
   <scm>
-    <connection>scm:svn:https://harrison.its-technidata.de:444/svn/ingrid/ingrid-portal-utils/branches/ingrid-portal-utils-3.5_REDMINE-304_JetspeedMigration</connection>
-    <developerConnection>scm:svn:https://harrison.its-technidata.de:444/svn/ingrid/ingrid-portal-utils/branches/ingrid-portal-utils-3.5_REDMINE-304_JetspeedMigration</developerConnection>
+    <connection>scm:git:git@github.com:informationgrid/ingrid-portal-utils.git</connection>
+    <developerConnection>scm:git:git@github.com:informationgrid/ingrid-portal-utils.git</developerConnection>
   </scm>
 
   <properties>
@@ -95,7 +95,7 @@
 		<repository>
           <id>de.ingrid.all</id>
           <name>Maven Repo InGrid</name>
-          <url>http://harrison.its-technidata.de/archiva/repository/ingrid-all</url>
+          <url>https://dev.informationgrid.eu/archiva/repository/ingrid-all</url>
         </repository>
 	<repository>
       <id>apache.snapshots</id>
