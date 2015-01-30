@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-portal-utils
  * ==================================================
- * Copyright (C) 2014 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -25,12 +25,10 @@
  */
 package de.ingrid.portal.security.util;
 
-import java.security.Permission;
 import java.security.Permissions;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
@@ -60,12 +58,11 @@ public class SecurityHelper {
      *            The JETSPEED role manager.
      * @return The merged Permissions.
      */
-    @SuppressWarnings("unchecked")
     public static Permissions getMergedPermissions(Principal p, PermissionManager permissionManager,
             RoleManager roleManager) {
         Permissions result = null;
         try {
-            Collection<Role> roles = (Collection<Role>)roleManager.getRolesForUser(p.getName());
+            Collection<Role> roles = roleManager.getRolesForUser(p.getName());
             result = getMergedPermissions(p, roles, permissionManager);
         } catch (SecurityException e) {
             if (log.isErrorEnabled()) {
@@ -92,9 +89,9 @@ public class SecurityHelper {
         while (roleIterator.hasNext()) {
             // check for role based permission to show the user
             Role role = roleIterator.next();
-            principals.add(role.getPrincipal());
+            principals.add(role);
         }
-        result = permissionManager.getPermissions(principals);
+        result = permissionManager.getPermissions(principals.toArray(new Principal[principals.size()]));
         return result;        
     }
     

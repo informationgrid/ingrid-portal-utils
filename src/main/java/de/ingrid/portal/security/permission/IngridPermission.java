@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-portal-utils
  * ==================================================
- * Copyright (C) 2014 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -27,17 +27,129 @@ package de.ingrid.portal.security.permission;
 
 import java.security.BasicPermission;
 import java.security.Permission;
+import java.security.PermissionCollection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
+
+import org.apache.jetspeed.security.spi.PersistentJetspeedPermission;
+import org.apache.jetspeed.security.spi.impl.BaseJetspeedPermission;
+import org.apache.jetspeed.security.spi.impl.JetspeedPermissionFactory;
 
 /**
  * General Ingrid permission class. Represents a permission with the parameter 
- * name and actions. Provides basic permission methods.
+ * name and actions. Provides basic permission methods.<br>
+ * NOTICE: This is now a Jetspeed permission of type "ingrid", or subtypes "ingrid_partner", "ingrid_provider" !
+ * Extends now BaseJetspeedPermission and NOT BasicPermission ! But behaviour is like BasicPermission !
  *
  * @author joachim@wemove.com
  */
-public class IngridPermission extends BasicPermission {
+public class IngridPermission extends BaseJetspeedPermission {
 
-    private static final long serialVersionUID = 2246210603932755952L;
+	private static final long serialVersionUID = 2246210603932755952L;
+    
+    private static final String INGRID_PERMISSION = "ingrid";
+
+    /** Simulate BasicPermissionCollection ! This one is returned when collection for this permission is requested ! */
+    private static class IngridPermissionCollection extends PermissionCollection
+    {
+		private transient Map<String, Permission> perms;
+
+        public IngridPermissionCollection() {
+            perms = new HashMap<String, Permission>(11);
+        }
+
+        @Override
+        public void add(Permission permission) {
+            synchronized (this) {
+                perms.put(permission.getName(), permission);
+            }
+        }
+
+        @Override
+        public Enumeration<Permission> elements() {
+            synchronized (this) {
+                return Collections.enumeration(perms.values());
+            }
+        }
+
+        @Override
+        public boolean implies(Permission permission) {
+            // strategy:
+            // Check for full match first. Then work our way up the
+            // path looking for matches on a.b..*
+
+            String path = permission.getName();
+            Permission x;
+
+            synchronized (this) {
+                x = perms.get(path);
+            }
+
+            if (x != null) {
+                // we have a direct hit!
+                return x.implies(permission);
+            }
+
+            // work our way up the tree...
+            int last, offset;
+
+            offset = path.length()-1;
+
+            while ((last = path.lastIndexOf(".", offset)) != -1) {
+                path = path.substring(0, last+1) + "*";
+                //System.out.println("check "+path);
+
+                synchronized (this) {
+                    x = perms.get(path);
+                }
+
+                if (x != null) {
+                    return x.implies(permission);
+                }
+                offset = last -1;
+            }
+
+            // check for "*"
+            synchronized (this) {
+                x = perms.get("*");
+            }
+            if (x != null) {
+                return x.implies(permission);
+            }
+            
+            return false;
+        }
+    }
+
+    public static class Factory extends JetspeedPermissionFactory
+    {
+        public Factory() {
+            super(INGRID_PERMISSION);
+        }
+
+        public IngridPermission newPermission(String name, String actions) {
+            return new IngridPermission(getType(), name, ("*".equals(actions)?"view,edit":actions));
+        }
+
+        public IngridPermission newPermission(String name, int mask)
+        {
+            return new IngridPermission(getType(), name, mask);
+        }
+
+        public IngridPermission newPermission(PersistentJetspeedPermission permission)
+        {
+            if (permission.getType().equals(getType())) {
+                return new IngridPermission(permission);
+            }
+            throw new IllegalArgumentException("Permission is not of type "+getType());
+        }
+    }
+
+    /** encapsulated BasicPermission used for handling of name ! */
+    protected BasicPermission myBasicPermission = null;
     
     // permission to change all portal specific stuff
     public static String PERMISSION_PORTAL_ADMIN = "admin.portal";
@@ -51,28 +163,38 @@ public class IngridPermission extends BasicPermission {
     // permission to change the search engine index (catalog topics, measure, service)
     public static String PERMISSION_PORTAL_ADMIN_CATALOG = "admin.portal.partner.provider.catalog";
     
-    private String actions = null;
     private String parsedActions = null;
     
-    public IngridPermission(String name, String actions) {
-        super(name);
-        this.actions = actions;
-        this.parsedActions = parseActions(actions);
+    /** Create an ingrid permission !
+     * @param type type of permission used for jetspeed !
+     * @param name resource the permission applies to e.g. "admin.portal"
+     * @param actions "*" will be replaced with "view,edit" to match Jetspeed actions and avoid exception ! 
+     */
+    protected IngridPermission(String type, String name, String actions) {
+    	// we have to replace "*" cause "*" action unknown to jetspeed, see JetspeedActions
+        super(type, name, ("*".equals(actions)?"view,edit":actions));
+        this.myBasicPermission = new BasicPermission(name) {};
+        this.parsedActions = parseActions(getActions());
+    }
+
+    protected IngridPermission(String type, String name, int mask) {
+        super(type, name, mask);
+    }
+
+    protected IngridPermission(PersistentJetspeedPermission permission) {
+        super(permission);
     }
 
     /**
      * @see java.security.Permission#hashCode()
      */
     public int hashCode() {
-        return getName().concat(actions).hashCode();
+        return getName().concat(getActions()).hashCode();
     }
 
-    /**
-     * @see java.security.Permission#getActions()
-     */
-    public String getActions() {
-        return actions;
-    }
+    public BasicPermission getBasicPermission() {
+		return myBasicPermission;
+	}
 
     /**
      * Checks if the permission is implied in this.
@@ -90,8 +212,13 @@ public class IngridPermission extends BasicPermission {
      */
     public boolean implies(Permission permission, boolean checkActions) {
 
-        // check permissions name and class
-        if (!super.implies(permission)) {
+        // The permission to check must be an instance of our class
+        if (!(permission instanceof IngridPermission)) {
+            return false;
+        }
+
+        // first check basic permission part
+        if (!myBasicPermission.implies(((IngridPermission)permission).getBasicPermission())) {
             return false;
         }
         
@@ -140,7 +267,13 @@ public class IngridPermission extends BasicPermission {
      * @see java.security.BasicPermission#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
+        // The object to check must be an instance of our class
+        if (!(obj instanceof IngridPermission)) {
+            return false;
+        }
+
+        // first check basic permission part
+        if (!myBasicPermission.equals(((IngridPermission)obj).getBasicPermission())) {
             return false; 
         }
         IngridPermission p = (IngridPermission)obj;
@@ -151,7 +284,16 @@ public class IngridPermission extends BasicPermission {
             return false;
         }
     }
-    
+
+    /**
+     * Our IngridPermissionCollection simulates a BasicPermissionCollection !
+     * 
+     * @see org.apache.jetspeed.security.spi.impl.BaseJetspeedPermission#newPermissionCollection()
+     */
+    public PermissionCollection newPermissionCollection() {
+        return new IngridPermissionCollection();
+    }
+
     /**
      * Return the parsed actions (used for performant equal check). 
      * The parsed actions String has the format |action1|action2|....|

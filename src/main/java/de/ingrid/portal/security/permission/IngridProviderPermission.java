@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-portal-utils
  * ==================================================
- * Copyright (C) 2014 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -26,6 +26,9 @@
 package de.ingrid.portal.security.permission;
 
 import java.security.Permission;
+
+import org.apache.jetspeed.security.spi.PersistentJetspeedPermission;
+import org.apache.jetspeed.security.spi.impl.JetspeedPermissionFactory;
 
 /**
  * This class represent a responsibility permission for certain providers.
@@ -54,6 +57,36 @@ public class IngridProviderPermission extends IngridPermission {
 
     private static final long serialVersionUID = 7405952399854216041L;
 
+    private static final String INGRID_PROVIDER_PERMISSION = "ingrid_provider";
+
+    public static class Factory extends JetspeedPermissionFactory
+    {
+        public Factory() {
+            super(INGRID_PROVIDER_PERMISSION);
+        }
+
+        public IngridProviderPermission newPermission(String name) {
+            return new IngridProviderPermission(getType(), name, "*");
+        }
+
+        public IngridProviderPermission newPermission(String name, String actions) {
+            return new IngridProviderPermission(getType(), name, actions);
+        }
+
+        public IngridProviderPermission newPermission(String name, int mask)
+        {
+            return new IngridProviderPermission(getType(), name, mask);
+        }
+
+        public IngridProviderPermission newPermission(PersistentJetspeedPermission permission)
+        {
+            if (permission.getType().equals(getType())) {
+                return new IngridProviderPermission(permission);
+            }
+            throw new IllegalArgumentException("Permission is not of type "+getType());
+        }
+    }
+
     /**
      * Constructor
      * 
@@ -62,18 +95,16 @@ public class IngridProviderPermission extends IngridPermission {
      * @param actions
      *            The providers actions (comma separated list)
      */
-    public IngridProviderPermission(String provider, String actions) {
-        super(provider, actions);
+    protected IngridProviderPermission(String type, String provider, String actions) {
+        super(type, provider, actions);
     }
 
-    /**
-     * Constructor
-     * 
-     * @param provider
-     *            The providers name.
-     */
-    public IngridProviderPermission(String provider) {
-        super(provider, "*");
+    protected IngridProviderPermission(String type, String name, int mask) {
+        super(type, name, mask);
+    }
+
+    protected IngridProviderPermission(PersistentJetspeedPermission permission) {
+        super(permission);
     }
 
     /**
@@ -97,5 +128,4 @@ public class IngridProviderPermission extends IngridPermission {
     public boolean implies(Permission permission) {
         return super.implies(permission, true);
     }
-
 }
