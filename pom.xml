@@ -78,7 +78,18 @@
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <defaultOriginUrl>https://github.com/informationgrid/ingrid-portal-utils</defaultOriginUrl>
+                    <noDeploy>true</noDeploy>
+                </configuration>
+            </plugin>
+        </plugins>
   </build>
   <repositories>
 		<!-- Repo of parent pom needed, parent pom may not be installed locally yet -->
