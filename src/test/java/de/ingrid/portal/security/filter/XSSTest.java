@@ -23,6 +23,8 @@
 package de.ingrid.portal.security.filter;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,19 +32,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 
 import de.ingrid.portal.security.util.XSSUtil;
 
-public class XSSTest extends TestCase {
+public class XSSTest {
 	
 	private static final Logger LOG = Logger.getLogger(XSSTest.class);
 
@@ -92,8 +94,8 @@ public class XSSTest extends TestCase {
 			"$REPLACE_VALUE" + "alert('TEST')"
 	};
 
-	@Override
-	protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
 		// mock FilterConfig
 
 		// Map containing all filter params (regexps) for external configuration.
@@ -114,7 +116,8 @@ public class XSSTest extends TestCase {
 		}
 	}
 
-	public void testFilterConfig() throws ServletException {
+    @Test
+    public void testFilterConfig() throws ServletException {
 		XSSUtil xssUtil = new XSSUtil();;
         xssUtil.parseFilterConfig(filterConfigMocked);
 
@@ -126,7 +129,8 @@ public class XSSTest extends TestCase {
 		}
     }
 
-	public void testXSSRequestWrapper() {
+    @Test
+    public void testXSSRequestWrapper() {
 		// Map containing all "infected" XSS parameter
 		Map<String, String[]> reqParamsMap = new HashMap<String, String[]>();
 		for (int i=0; i<paramValuesInfected.length; i++) {

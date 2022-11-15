@@ -22,16 +22,18 @@
  */
 package de.ingrid.portal.security.permission;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.security.Permissions;
 import java.util.Enumeration;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
-
-public class IngridProviderPermissionTest extends TestCase {
+public class IngridProviderPermissionTest {
 
     /*
      * Test method for 'de.ingrid.portal.security.permission.IngridProviderPermission.implies(Permission)'
      */
+    @Test
     public void testImpliesPermission() {
     	IngridProviderPermission.Factory myProviderPermissionFactory = new IngridProviderPermission.Factory();
 
@@ -61,6 +63,7 @@ public class IngridProviderPermissionTest extends TestCase {
         assertEquals("*", p.getProvider());
     }
 
+    @Test
     public void testEqualsObject() {
     	IngridProviderPermission.Factory myProviderPermissionFactory = new IngridProviderPermission.Factory();
         
@@ -68,7 +71,8 @@ public class IngridProviderPermissionTest extends TestCase {
     	IngridProviderPermission p1 = myProviderPermissionFactory.newPermission("provider.he", "*");
         assertEquals(true, p.equals(p1));       
     }
-    
+
+    @Test
     public void testPermissionsAddBehaviour() {
     	IngridProviderPermission.Factory myProviderPermissionFactory = new IngridProviderPermission.Factory();
     	IngridPartnerPermission.Factory myPartnerPermissionFactory = new IngridPartnerPermission.Factory();
