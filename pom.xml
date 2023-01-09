@@ -2,13 +2,13 @@
   <parent>
     <artifactId>ingrid-base-pom</artifactId>
     <groupId>de.ingrid</groupId>
-    <version>3.5.1</version>
+    <version>5.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.ingrid</groupId>
   <artifactId>ingrid-portal-utils</artifactId>
   <packaging>jar</packaging>
-  <version>3.6.2-SNAPSHOT</version>
+  <version>5.15.0-SNAPSHOT</version>
   <name>InGrid Portal-Utils</name>
   <scm>
     <connection>scm:git:git@github.com:informationgrid/ingrid-portal-utils.git</connection>
@@ -17,7 +17,8 @@
   </scm>
 
   <properties>
-    <org.apache.portals.jetspeed.version>2.3.0</org.apache.portals.jetspeed.version>
+      <java.version>17</java.version>
+      <org.apache.portals.jetspeed.version>2.3.0</org.apache.portals.jetspeed.version>
   </properties>
 
   <!-- ==================== DEPENDENCY MANAGEMENT ==================== -->
@@ -45,11 +46,17 @@
       <artifactId>jetspeed-api</artifactId>
     </dependency>
     <!-- Needed for unit tests runtime -->
-      <dependency>
-        <groupId>org.apache.portals</groupId>
-        <artifactId>portlet-api_2.1.0_spec</artifactId>
-        <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.apache.portals</groupId>
+      <artifactId>portlet-api_2.1.0_spec</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.9.1</version>
+      <scope>test</scope>
+    </dependency>
 
 <!-- Enable when ESAPI used in XSSRequestWrapper -->
 <!--
@@ -65,14 +72,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>1.9.5</version>
+        <artifactId>mockito-core</artifactId>
+        <version>3.12.4</version>
         <scope>test</scope>
     </dependency>
   </dependencies>
