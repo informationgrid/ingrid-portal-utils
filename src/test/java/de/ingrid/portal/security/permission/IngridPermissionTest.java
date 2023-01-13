@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-portal-utils
  * ==================================================
- * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -22,16 +22,18 @@
  */
 package de.ingrid.portal.security.permission;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.security.Permissions;
 import java.util.Enumeration;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
-
-public class IngridPermissionTest extends TestCase {
+public class IngridPermissionTest {
 
     /*
      * Test method for 'de.ingrid.portal.security.permission.IngridPermission.getActions()'
      */
+    @Test
     public void testGetActions() {
     	IngridPermission.Factory myIngridPermissionFactory = new IngridPermission.Factory();
 
@@ -46,6 +48,7 @@ public class IngridPermissionTest extends TestCase {
     /*
      * Test method for 'de.ingrid.portal.security.permission.IngridPermission.implies(Permission)'
      */
+    @Test
     public void testImpliesPermission() {
     	IngridPermission.Factory myIngridPermissionFactory = new IngridPermission.Factory();
     	
@@ -89,6 +92,7 @@ public class IngridPermissionTest extends TestCase {
     /*
      * Test method for 'de.ingrid.portal.security.permission.IngridPermission.equals(Object)'
      */
+    @Test
     public void testEqualsObject() {
     	IngridPermission.Factory myIngridPermissionFactory = new IngridPermission.Factory();
         
@@ -121,7 +125,8 @@ public class IngridPermissionTest extends TestCase {
         assertEquals(false, p.equals(p1));
         
     }
-    
+
+    @Test
     public void testPermissionsAddBehaviour() {
     	IngridPermission.Factory myIngridPermissionFactory = new IngridPermission.Factory();
         
