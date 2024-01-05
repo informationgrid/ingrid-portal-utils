@@ -1,14 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>ingrid-base-pom</artifactId>
     <groupId>de.ingrid</groupId>
-    <version>5.0.0</version>
+    <version>7.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>de.ingrid</groupId>
   <artifactId>ingrid-portal-utils</artifactId>
   <packaging>jar</packaging>
-  <version>6.0.0</version>
+  <version>7.0.0</version>
   <name>InGrid Portal-Utils</name>
   <scm>
     <connection>scm:git:git@github.com:informationgrid/ingrid-portal-utils.git</connection>
@@ -94,12 +93,12 @@
         </plugins>
   </build>
   <repositories>
-		<!-- Repo of parent pom needed, parent pom may not be installed locally yet -->
-		<repository>
-          <id>de.ingrid.all</id>
-          <name>Maven Repo InGrid</name>
-          <url>https://dev.informationgrid.eu/archiva/repository/ingrid-all</url>
-        </repository>
+    <!-- Repo of parent pom needed, parent pom may not be installed locally yet -->
+    <repository>
+      <id>nexus</id>
+      <name>Nexus Repo</name>
+      <url>https://nexus.informationgrid.eu/repository/maven-public</url>
+    </repository>
 	<repository>
       <id>apache.snapshots</id>
       <url>https://repository.apache.org/content/repositories/snapshots</url>
